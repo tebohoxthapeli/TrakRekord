@@ -9,8 +9,8 @@
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
-*.jpg
-*.mp3
+public/coverArt
+public/songs
 
 # testing
 /coverage
