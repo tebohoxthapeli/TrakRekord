@@ -1,0 +1,12 @@
+.ControlsRight {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+#volumeSlider {
+    margin-left: 0.8rem !important;
+    width: 75%;
+    height: 2px;
+    cursor: pointer;
+}
