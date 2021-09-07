@@ -1,0 +1,91 @@
+.PlaylistSongs {
+    width: inherit;
+    position: relative;
+}
+
+.btn {
+    width: inherit;
+    padding: 0.25rem 0;
+    margin-bottom: 4px;
+    background: rgb(110, 110, 110);
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    outline: none;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 1.5fr 7fr 1.5fr;
+    align-items: center;
+}
+
+.item > .playIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item h4 {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.item p {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-weight: 700;
+    color: rgb(20, 20, 20);
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.icon {
+    position: absolute;
+    right: 0;
+    bottom: 50%;
+    transform: translateY(50%);
+}
+
+.remove-circle {
+    color: transparent !important;
+}
+.PlaylistSongs:hover .remove-circle {
+    color: #ffffff !important;
+}
+.remove-circle-btn:hover .remove-circle {
+    color: rgb(20, 20, 20) !important;
+}
+
+.play-arrow {
+    display: none !important;
+}
+.btn:hover .play-arrow {
+    display: block !important;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn:hover {
+    background: rgb(75, 75, 75);
+}
+
+.btn:hover p {
+    color: rgb(170, 169, 169);
+}
+
+.info {
+    overflow: hidden;
+}
+
+.isPlaying {
+    background: rgb(0, 79, 182);
+}
+
+.isPlaying p {
+    color: rgb(168, 208, 245);
+}

@@ -8,7 +8,7 @@ import "./SongControls.css";
 
 const useStyles = makeStyles({
     root: {
-        padding: 2,
+        padding: 5,
         "&:hover": {
             color: "rgb(110, 161, 255)",
         },

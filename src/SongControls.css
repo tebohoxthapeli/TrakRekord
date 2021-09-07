@@ -1,6 +1,6 @@
 .SongControls {
     display: flex;
-    width: 40vw;
+    width: 100%;
 }
 
 .left,
