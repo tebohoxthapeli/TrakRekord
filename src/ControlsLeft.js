@@ -9,11 +9,10 @@ import { useDataLayerValue } from './DataLayer';
 import { shuffleSongs, songs } from "./dataAndFunctions";
 
 const ControlsLeft = ({ props: { root, size, marginRight } }) => {
-    const [{ playlistState, songNumber }, dispatch] = useDataLayerValue();
+    const [{ playlistState, songNumber, repeat }, dispatch] = useDataLayerValue();
 
     const [lastSongNumber, setLastSongNumber] = useState(0);
     const [isShuffle, setIsShuffle] = useState(false);
-    const [repeat, setRepeat] = useState("off");
 
     const handleShuffle = () => {
         if (isShuffle) {
@@ -62,10 +61,19 @@ const ControlsLeft = ({ props: { root, size, marginRight } }) => {
         // eslint-disable-next-line
     }, [isShuffle]);
 
+    const switchRepeatState = () => {
+        switch(repeat) {
+            case "off": return "once"
+            case "once": return "all"
+            default: return "off"
+        }
+    }
+
     const handleRepeat = () => {
-        if (repeat === "off") setRepeat("once");
-        else if (repeat === "once") setRepeat("all");
-        else setRepeat("off");
+        dispatch({
+            type: "SET_REPEAT",
+            repeat: switchRepeatState(),
+        });
     };
 
     const shuffleColour = () => {
@@ -86,7 +94,7 @@ const ControlsLeft = ({ props: { root, size, marginRight } }) => {
                 <ShuffleRoundedIcon className={size} />
             </IconButton>
 
-            <IconButton className={`${root} ${marginRight}`} color={repeatColour()} onClick={handleRepeat}>
+            <IconButton className={`${root} ${marginRight}`} color={repeatColour()} onClick={() => handleRepeat()}>
                 {(repeat === "once") ? <RepeatOneRoundedIcon className={size} /> : <RepeatRoundedIcon className={size} />}
             </IconButton>
         </div>

@@ -13,6 +13,10 @@ export const initialState = {
         firstUnshuffleBack: true,
         firstUnshuffleFront: true,
     },
+    setSeekBarValue: function () {},
+    audio: null,
+    reset: 0,
+    repeat: "off"
 };
 
 const reducer = (state, action) => {
@@ -46,6 +50,24 @@ const reducer = (state, action) => {
                 ...state,
                 shuffleStates: action.shuffleStates,
             }
+
+        case "SET_AUDIO":
+            return {
+                ...state,
+                audio: action.audio,
+            }
+
+        case "SET_RESET":
+            return {
+                ...state,
+                reset: action.reset,
+            }
+
+            case "SET_REPEAT":
+                return {
+                    ...state,
+                    repeat: action.repeat
+                }
 
         default:
             return state;

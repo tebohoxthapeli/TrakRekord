@@ -8,7 +8,7 @@ import PauseCircleFilledRoundedIcon from '@material-ui/icons/PauseCircleFilledRo
 import SkipNextRoundedIcon from '@material-ui/icons/SkipNextRounded';
 
 const ControlsCenter = ({ props: { root, margin, sizes: { medium, large } } }) => {
-    const [{ isPlaying, playlistState, songNumber, shuffleStates, currentSong }, dispatch] = useDataLayerValue();
+    const [{ isPlaying, playlistState, songNumber, shuffleStates, currentSong, reset, audio }, dispatch] = useDataLayerValue();
 
     const dispatchCurrentSong = (newSongNumber) => {
         dispatch({
@@ -104,11 +104,13 @@ const ControlsCenter = ({ props: { root, margin, sizes: { medium, large } } }) =
     };
 
     const skipBackward = () => {
-        // if (audioFile.current.currentTime >= 5) {
-        //     seekBar.current.value = 0;
-        // }
-        // else 
-        goBackwards();
+        if (audio.currentTime >= 5 && isPlaying) {
+            dispatch({
+                type: "SET_RESET",
+                reset: (reset + 1),
+            })
+        }
+        else goBackwards();
     };
 
     return (
