@@ -4,129 +4,140 @@ import { formatTime } from "./dataAndFunctions";
 
 import "./SongInfo.css";
 
+let noChangeSeek = false;
+let timer;
+
 function SongInfo() {
     const [seekBarValue, setSeekBarValue] = useState(0);
     const [time, setTime] = useState({ currentTime: 0, duration: 0 });
     const [manualSeekChange, setManualSeekChange] = useState(0);
 
-    const [{ currentSong, isPlaying, reset, repeat, songNumber, playlistState }, dispatch] = useDataLayerValue();
+    const [{ currentSong, isPlaying, reset, repeat, songNumber, playlistState, vol }, dispatch] = useDataLayerValue();
 
     const audioRef = useRef(null);
     const seekBarRef = useRef(null);
+    const repeatRef = useRef(false);
 
     useEffect(() => {
-        setTime({
-            ...time,
-            currentTime: 0
-        })
-        audioRef.current.currentTime = 0;
-        // eslint-disable-next-line
-    }, [reset]);
+        audioRef.current.volume = vol;
+    }, [vol]);
 
+    // REFRESH COMPONENTS FOR NEW SONG
     useEffect(() => {
-        setSeekBarValue(0); 
-
+        setSeekBarValue(0);
         setTimeout(() => {
-            setTime({ currentTime: 0, duration: audioRef.current.duration });
+            setTime({ currentTime: 0, duration: Math.trunc(audioRef.current.duration) });
             seekBarRef.current.max = time.duration;
-        }, 500) 
+        }, 500)
 
         // eslint-disable-next-line
-    }, [currentSong,  time.duration, dispatch]);
+    }, [currentSong, time.duration, dispatch]);
 
+
+    // UPDATE SONG TIME
     useEffect(() => {
         if (isPlaying) {
             audioRef.current.play();
 
-            setInterval(() => {
-                setTime((time) => {
-                    return {
-                        ...time,
-                        currentTime: audioRef.current.currentTime,
-                    }
-                })
-            }, 500)
+            clearInterval(timer);
+            timer = setInterval(() => {
+                setTime((time) => ({ 
+                    ...time,
+                    currentTime: time.currentTime + 1,
+                }));
+
+            }, 1000);
         }
         else {
             audioRef.current.pause();
-        }
-    }, [isPlaying, currentSong])
+            clearInterval(timer);
+        }        
+    }, [isPlaying, currentSong, reset]);
 
-    useEffect(() => {
-        setSeekBarValue(time.currentTime);
-    }, [time.currentTime]);
 
+    // UPDATE SONG CURRENT TIME WHEN SEEKBAR MANUALLY CHANGED
     useEffect(() => {
+        noChangeSeek = true;
         audioRef.current.currentTime = seekBarValue;
+        setTime({ ...time, currentTime: Number(seekBarValue) });
 
-        setTime({
-            ...time,
-            currentTime: seekBarValue,
-        })
         // eslint-disable-next-line
     }, [manualSeekChange]);
 
+
+    // UPDATE SEEKBAR VALUE WHEN SONG CURRENT TIME CHANGES
     useEffect(() => {
-        dispatch({
-            type: "SET_AUDIO",
-            audio: audioRef.current,
-        })
+        if (!noChangeSeek) setSeekBarValue(time.currentTime);
+        noChangeSeek = false;
+
+        // eslint-disable-next-line
+    }, [time.currentTime]);
+
+
+    // DISPATCH CURRENT SONG SO OTHER MODULES HAVE ACCESS TO IT
+    useEffect(() => {
+        dispatch({ type: "SET_AUDIO", audio: audioRef.current });
     }, [dispatch]);
 
+
+
+    useEffect(() => {
+        repeatRef.current = repeat;
+    }, [repeat]);
+
+
+    // GO BACK TO BEGINNING OF A SONG
+    useEffect(() => {
+        setTime({ ...time, currentTime: 0 });
+        audioRef.current.currentTime = 0;
+
+        // eslint-disable-next-line
+    }, [reset]);
+
+
+    // REPEAT BUTTON FUNCTIONALITY
     const handleRepeat = () => {
         let newSongNumber;
+        // clearInterval(timer);
 
-        switch (repeat) {
+        switch (repeatRef.current) {
             case "once":
-                dispatch({
-                    type: "SET_RESET",
-                    reset: (reset + 1),
-                })
+                dispatch({ type: "SET_RESET", reset: (reset + 1) });
                 audioRef.current.play();
                 break;
 
             case "all":
+                // clearInterval(timer);
                 newSongNumber = (songNumber === playlistState.length - 1) ? 0 : songNumber + 1;
-                dispatch({
-                    type: "SET_SONG_NUMBER",
-                    songNumber: newSongNumber,
-                });
-                dispatch({
-                    type: "SET_CURRENT_SONG",
-                    currentSong: playlistState[newSongNumber],
-                });
+                dispatch({ type: "SET_SONG_NUMBER", songNumber: newSongNumber });
+                dispatch({ type: "SET_CURRENT_SONG", currentSong: playlistState[newSongNumber] });
                 break;
 
             case "off":
                 if (songNumber === playlistState.length - 1) {
                     audioRef.current.pause();
-                    dispatch({
-                        type: "SET_ISPLAYING",
-                        isPlaying: false,
-                    });
+                    setTime({ ...time, currentTime: 0 });
+                    dispatch({ type: "SET_ISPLAYING", isPlaying: false });
                 }
                 else {
+                    // clearInterval(timer);
                     newSongNumber = songNumber + 1;
-                    dispatch({
-                        type: "SET_SONG_NUMBER",
-                        songNumber: newSongNumber,
-                    });
-                    dispatch({
-                        type: "SET_CURRENT_SONG",
-                        currentSong: playlistState[newSongNumber],
-                    })
+                    dispatch({ type: "SET_SONG_NUMBER", songNumber: newSongNumber });
+                    dispatch({ type: "SET_CURRENT_SONG", currentSong: playlistState[newSongNumber] });
                 }
                 break;
+
             default:
                 return;
         }
     }
 
+    // WHAT TO DO WHEN THE SONG ENDS
     useEffect(() => {
         const dup = audioRef.current;
-
         audioRef.current.addEventListener("ended", handleRepeat);
         return () => dup.removeEventListener("ended", handleRepeat);
+
         // eslint-disable-next-line
     }, [songNumber])
 

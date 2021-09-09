@@ -16,7 +16,8 @@ export const initialState = {
     setSeekBarValue: function () {},
     audio: null,
     reset: 0,
-    repeat: "off"
+    repeat: "off",
+    vol: 1,
 };
 
 const reducer = (state, action) => {
@@ -63,11 +64,17 @@ const reducer = (state, action) => {
                 reset: action.reset,
             }
 
-            case "SET_REPEAT":
-                return {
-                    ...state,
-                    repeat: action.repeat
-                }
+        case "SET_REPEAT":
+            return {
+                ...state,
+                repeat: action.repeat,
+            }
+
+        case "SET_VOLUME":
+            return {
+                ...state,
+                vol: action.vol,
+            }
 
         default:
             return state;

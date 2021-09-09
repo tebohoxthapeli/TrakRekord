@@ -18,7 +18,7 @@ const useStyles = makeStyles({
     },
 });
 
-const PlaylistSongs = ({ props: { title, artist, index, playState } }) => {
+const PlaylistSongs = ({ props: { title, artist, index, playState, id } }) => {
     const classes = useStyles();
     const [{ playlistState }, dispatch] = useDataLayerValue();
 
@@ -32,6 +32,21 @@ const PlaylistSongs = ({ props: { title, artist, index, playState } }) => {
             type: "SET_SONG_NUMBER",
             songNumber: index,
         });
+
+        dispatch({
+            type: "SET_ISPLAYING",
+            isPlaying: true,
+        });
+    };
+
+    const handleRemove = () => {
+        playlistState.splice(index, 1);
+
+        dispatch({
+            type: "SET_PLAYLIST_STATE",
+            playlistState: playlistState,
+        });
+        // playlistState.filter(song => song.id !== id)
     };
 
     return (
@@ -39,7 +54,7 @@ const PlaylistSongs = ({ props: { title, artist, index, playState } }) => {
                 <button className={`btn ${playState && "isPlaying"}`} onClick={handleClick}>
                     <div className="item">
                         <div className="playIcon">
-                            <PlayArrowSharpIcon className={`${classes.playArrow} play-arrow`} />
+                        <PlayArrowSharpIcon className={`${classes.playArrow} ${!playState && "play-arrow" }`} />
                         </div>
 
                         <div className="info">
@@ -50,7 +65,7 @@ const PlaylistSongs = ({ props: { title, artist, index, playState } }) => {
                 </button>
 
                 <div className="icon">
-                    <IconButton color="primary" className={`${classes.removeCircleBtn} remove-circle-btn`}>
+                    <IconButton color="primary" className={`${classes.removeCircleBtn} remove-circle-btn`} onClick={handleRemove}>
                         <RemoveCircleOutlineSharpIcon className={`${classes.removeCircle} remove-circle`} />
                     </IconButton>
                 </div>

@@ -7,12 +7,19 @@ import VolumeOffRoundedIcon from '@material-ui/icons/VolumeOffRounded';
 import VolumeDownRoundedIcon from '@material-ui/icons/VolumeDownRounded';
 
 import "./ControlsRight.css";
+import { useDataLayerValue } from './DataLayer';
 
-let lastValue = 1;
+let lastValue;
 
 const ControlsRight = ({ props: { root, size } }) => {
+    const [{ vol }, dispatch] = useDataLayerValue();
     const [isMute, setIsMute] = useState(false);
     const [volume, setVolume] = useState(1);
+
+    useEffect(() => {
+        lastValue = vol;
+        // eslint-disable-next-line
+    }, [])
 
     const getIconState = () => {
         if (!isMute) {
@@ -21,6 +28,14 @@ const ControlsRight = ({ props: { root, size } }) => {
             return "volume mute";
         }
     };
+
+    useEffect(() => {
+        dispatch({
+            type: "SET_VOLUME",
+            vol: volume,
+        });
+        // eslint-disable-next-line
+    }, [volume]);
 
     useEffect(() => {
         if (isMute) {

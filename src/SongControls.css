@@ -1,6 +1,11 @@
 .SongControls {
+    border: 1px solid white;
     display: flex;
     width: 100%;
+}
+
+.SongControls > * {
+    border: 1px solid yellow;
 }
 
 .left,

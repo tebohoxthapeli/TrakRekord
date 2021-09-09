@@ -74,6 +74,7 @@ const ControlsLeft = ({ props: { root, size, marginRight } }) => {
             type: "SET_REPEAT",
             repeat: switchRepeatState(),
         });
+        console.log(switchRepeatState());
     };
 
     const shuffleColour = () => {
@@ -94,7 +95,7 @@ const ControlsLeft = ({ props: { root, size, marginRight } }) => {
                 <ShuffleRoundedIcon className={size} />
             </IconButton>
 
-            <IconButton className={`${root} ${marginRight}`} color={repeatColour()} onClick={() => handleRepeat()}>
+            <IconButton className={`${root} ${marginRight}`} color={repeatColour()} onClick={handleRepeat}>
                 {(repeat === "once") ? <RepeatOneRoundedIcon className={size} /> : <RepeatRoundedIcon className={size} />}
             </IconButton>
         </div>
